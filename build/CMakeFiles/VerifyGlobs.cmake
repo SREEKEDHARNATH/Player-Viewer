@@ -5,6 +5,7 @@
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/home/sree/12-weeks-projects/Player-Viewer/src/*.cpp")
 set(OLD_GLOB
   "/home/sree/12-weeks-projects/Player-Viewer/src/Log.cpp"
+  "/home/sree/12-weeks-projects/Player-Viewer/src/listeners.cpp"
   "/home/sree/12-weeks-projects/Player-Viewer/src/main.cpp"
   "/home/sree/12-weeks-projects/Player-Viewer/src/window.cpp"
   )

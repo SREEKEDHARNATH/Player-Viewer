@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include <SDL_events.h>
 #include <SDL_image.h>
+#include <SDL_keycode.h>
+#include <SDL_mouse.h>
 #include <SDL_render.h>
 #include <SDL_timer.h>
 #include <SDL_ttf.h>
@@ -9,6 +11,8 @@
 #include <utility>
 #include "window.hpp"
 #include "Log.hpp"
+#include "listeners.hpp"
+
 namespace core {
     std::pair<bool, const char*> init();
     void run(){
@@ -25,12 +29,30 @@ namespace core {
                     case SDL_QUIT:
                         running=false;
                         break;
+                    case SDL_KEYUP:
+                    case SDL_KEYDOWN:
+                        keylistener::reg(e.key);
+                        break;
+                    case SDL_MOUSEMOTION:
+                        mouselistener::reg(e.motion);
+                        break;
+                    case SDL_MOUSEBUTTONDOWN:
+                    case SDL_MOUSEBUTTONUP:
+                        mouselistener::reg(e.button);
+                        break;
+                    case SDL_MOUSEWHEEL:
+                        mouselistener::reg(e.wheel);
+                        break;
+                    
                 }
             }
+            running=!keylistener::isPressed(SDLK_ESCAPE);
 
             SDL_RenderClear(getRenderer());
             SDL_RenderPresent(getRenderer());
             
+            keylistener::update();
+            mouselistener::update();
             SDL_Delay(16);
         }
     }
