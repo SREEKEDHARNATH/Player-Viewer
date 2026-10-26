@@ -11,7 +11,7 @@ namespace core{
             std::cout << "Info: " << data << "\n";
         }
         else if(l==LOG::WARN){
-            std::cout << "Warning: " << data << "|n";
+            std::cout << "Warning: " << data << "\n";
         }
         else{
             std::cerr << "Error: " << data << "\n";

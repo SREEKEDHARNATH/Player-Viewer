@@ -11,6 +11,7 @@
 #include <utility>
 #include "window.hpp"
 #include "Log.hpp"
+#include "api.hpp"
 #include "listeners.hpp"
 
 namespace core {
@@ -23,6 +24,8 @@ namespace core {
 
         bool running=true;
         SDL_Event e;
+        api::font f("assets/fonts/Montserrat-BoldItalic.ttf", 32);
+        api::text t("Hi", f.get());
         while (running) {
             while (SDL_PollEvent(&e)){
                 switch (e.type) {
@@ -49,6 +52,7 @@ namespace core {
             running=!keylistener::isPressed(SDLK_ESCAPE);
 
             SDL_RenderClear(getRenderer());
+            t.draw();
             SDL_RenderPresent(getRenderer());
             
             keylistener::update();
@@ -72,6 +76,9 @@ namespace core {
         if ((Mix_Init(sound_flags) & sound_flags) != sound_flags){
             return {false, Mix_GetError()};
         }
+        if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)){
+            return {false, Mix_GetError()};
+        }
         getWindow()=SDL_CreateWindow(getTitle().c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, getW(), getH(), 0);
         if (!getWindow()){
             return {false, SDL_GetError()};
@@ -89,6 +96,7 @@ namespace core {
         if (getRenderer()){
             SDL_DestroyRenderer(getRenderer());
         }
+        Mix_CloseAudio();
         Mix_Quit();
         TTF_Quit();
         IMG_Quit();

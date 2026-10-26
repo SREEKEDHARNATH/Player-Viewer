@@ -154,6 +154,30 @@ src/Log.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/p.dir/build.make CMakeFiles/p.dir/src/Log.cpp.s
 .PHONY : src/Log.cpp.s
 
+src/api.o: src/api.cpp.o
+.PHONY : src/api.o
+
+# target to build an object file
+src/api.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p.dir/build.make CMakeFiles/p.dir/src/api.cpp.o
+.PHONY : src/api.cpp.o
+
+src/api.i: src/api.cpp.i
+.PHONY : src/api.i
+
+# target to preprocess a source file
+src/api.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p.dir/build.make CMakeFiles/p.dir/src/api.cpp.i
+.PHONY : src/api.cpp.i
+
+src/api.s: src/api.cpp.s
+.PHONY : src/api.s
+
+# target to generate assembly for a file
+src/api.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/p.dir/build.make CMakeFiles/p.dir/src/api.cpp.s
+.PHONY : src/api.cpp.s
+
 src/listeners.o: src/listeners.cpp.o
 .PHONY : src/listeners.o
 
@@ -238,6 +262,9 @@ help:
 	@echo "... src/Log.o"
 	@echo "... src/Log.i"
 	@echo "... src/Log.s"
+	@echo "... src/api.o"
+	@echo "... src/api.i"
+	@echo "... src/api.s"
 	@echo "... src/listeners.o"
 	@echo "... src/listeners.i"
 	@echo "... src/listeners.s"

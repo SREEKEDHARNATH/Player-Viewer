@@ -3,6 +3,7 @@ p: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/crti.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o \
   CMakeFiles/p.dir/src/Log.cpp.o \
+  CMakeFiles/p.dir/src/api.cpp.o \
   CMakeFiles/p.dir/src/listeners.cpp.o \
   CMakeFiles/p.dir/src/main.cpp.o \
   CMakeFiles/p.dir/src/window.cpp.o \
@@ -78,6 +79,8 @@ p: \
 /usr/lib/gcc/x86_64-pc-linux-gnu/16/crtbeginS.o:
 
 CMakeFiles/p.dir/src/Log.cpp.o:
+
+CMakeFiles/p.dir/src/api.cpp.o:
 
 CMakeFiles/p.dir/src/listeners.cpp.o:
 
