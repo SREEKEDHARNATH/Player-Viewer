@@ -7,6 +7,7 @@
 #include <SDL_surface.h>
 #include <SDL_ttf.h>
 #include <memory>
+#include <string>
 namespace core::api {
     image::image(const char* name, bool autoset,bool load){
         if (load){
@@ -57,25 +58,32 @@ namespace core::api {
     }
 
     void text::init(const char* txt){
-        if (auto p = fo.lock()){
-            if (p.get()){
-                SDL_Surface* surf=TTF_RenderUTF8_Blended(p.get(), txt, {255,255,255,255});
-                if (!surf){
-                    log(TTF_GetError(), LOG::WARN);
-                    return;
+        std::string ta=txt;
+        if (!ta.empty()){
+            if (auto p = fo.lock()){
+                if (p.get()){
+                    SDL_Surface* surf=TTF_RenderUTF8_Blended(p.get(), txt, {255,255,255,255});
+                    if (!surf){
+                        log(TTF_GetError(), LOG::WARN);
+                        return;
+                    }
+                    SDL_Texture* tex=SDL_CreateTextureFromSurface(getRenderer(), surf);
+                    SDL_FreeSurface(surf);
+                    if (!tex){
+                        log(IMG_GetError(), LOG::WARN);
+                        return;
+                    }
+                    img.setTex(tex);
+                    st=txt;
+                    empty=false;
                 }
-                SDL_Texture* tex=SDL_CreateTextureFromSurface(getRenderer(), surf);
-                SDL_FreeSurface(surf);
-                if (!tex){
-                    log(IMG_GetError(), LOG::WARN);
-                    return;
-                }
-                img.setTex(tex);
-                st=txt;
+            }
+            else {
+                log("Invalid font", LOG::WARN);
             }
         }
         else {
-            log("Invalid font", LOG::WARN);
+           empty=true; 
         }
     }
     text::text(const char* txt, std::weak_ptr<TTF_Font> f) : img("",false,false){
@@ -84,7 +92,9 @@ namespace core::api {
     }
     void text::draw(){
         if (img.get()){
-            img.draw();
+            if (!empty){
+                img.draw();
+            }
         }
     }
     void text::setText(const char* txt){

@@ -26,6 +26,7 @@ namespace core::api {
         std::weak_ptr<TTF_Font> fo;
         void init(const char* txt);
         std::string st;
+        bool empty=false;
         public:
             api::image img;
             text(const char* txt, std::weak_ptr<TTF_Font> f);

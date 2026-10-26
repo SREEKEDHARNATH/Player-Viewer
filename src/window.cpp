@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_events.h>
 #include <SDL_image.h>
+#include <SDL_keyboard.h>
 #include <SDL_keycode.h>
 #include <SDL_mouse.h>
 #include <SDL_render.h>
@@ -25,7 +26,9 @@ namespace core {
         bool running=true;
         SDL_Event e;
         api::font f("assets/fonts/Montserrat-BoldItalic.ttf", 32);
-        api::text t("Hi", f.get());
+        api::text t("", f.get());
+        std::string txt="";
+        bool caps=false;
         while (running) {
             while (SDL_PollEvent(&e)){
                 switch (e.type) {
@@ -50,7 +53,42 @@ namespace core {
                 }
             }
             running=!keylistener::isPressed(SDLK_ESCAPE);
-
+            if (keylistener::isPressed(SDLK_CAPSLOCK)){
+                caps=!caps;
+            }
+            for (int i=32;i<=122;i++){
+                if (i==33){
+                    i=44;
+                }
+                if (i == 58 || i == 60 || i == 62 || i == 63 || i == 64 || i == 94 || i == 95){
+                    continue;
+                }
+                if (i>64 && i<91){
+                    if (keylistener::isPressed((SDL_KeyCode)(i+32))){
+                        SDL_KeyboardEvent key;
+                        key.state=SDL_RELEASED;
+                        key.keysym.scancode=SDL_GetScancodeFromKey((SDL_KeyCode)(i+32));
+                        keylistener::reg(key);
+                        txt+=(char)(caps ? i : i+32);
+                    }
+                }
+                else {
+                    if (keylistener::isPressed((SDL_KeyCode)i)){
+                        txt+=(char)i;
+                    }
+                }
+            }
+            if (keylistener::isPressed(SDLK_BACKSPACE)){
+                if (txt.size()>1){
+                    txt=txt.substr(0,txt.size()-1);
+                }
+                else if(txt.size()==1){
+                    txt="";
+                }
+            }
+            if (txt!=t.getText()){
+                t.setText(txt.c_str());
+            }
             SDL_RenderClear(getRenderer());
             t.draw();
             SDL_RenderPresent(getRenderer());
