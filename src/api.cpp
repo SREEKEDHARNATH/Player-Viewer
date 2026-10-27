@@ -11,7 +11,7 @@
 namespace core::api {
     image::image(const char* name, bool autoset,bool load){
         if (load){
-            SDL_Texture* tex=IMG_LoadTexture(getRenderer(), name);
+            SDL_Texture* tex= IMG_LoadTexture(getRenderer(), name);
             if (!tex){
                 log(IMG_GetError(), LOG::WARN);
                 return;
@@ -22,9 +22,10 @@ namespace core::api {
             }
         }
     }
+
     void image::draw(){
         if (get().get()){
-            if (dstrect.w==0 || dstrect.h==0){
+            if (dstrect.w == 0 || dstrect.h == 0){
                 SDL_RenderCopy(getRenderer(), get().get(), NULL, NULL);
             }
             else{
@@ -32,6 +33,7 @@ namespace core::api {
             }
         }
     }
+
     void image::setTex(SDL_Texture* tex, bool autoset){
         if (tex){
             ptr.reset(tex, SDL_DestroyTexture);
@@ -43,9 +45,11 @@ namespace core::api {
             log("Invalid Texture in settex image class", LOG::INFO);
         }
     }
+
     std::shared_ptr<SDL_Texture> image::get(){
         return ptr;
     }
+
     font::font(const char* name, int ptsize){
         ptr.reset(TTF_OpenFont(name, ptsize), TTF_CloseFont);
         if (!ptr.get()){
@@ -53,27 +57,32 @@ namespace core::api {
             return;
         }
     }
+
     std::weak_ptr<TTF_Font> font::get(){
         return std::weak_ptr<TTF_Font>(ptr);
     }
 
     void text::init(const char* txt){
         std::string ta=txt;
+
         if (!ta.empty()){
-            if (auto p = fo.lock()){
+            if (std::shared_ptr<TTF_Font> p = fo.lock()){
                 if (p.get()){
+
                     SDL_Surface* surf=TTF_RenderUTF8_Blended(p.get(), txt, {255,255,255,255});
                     if (!surf){
                         log(TTF_GetError(), LOG::WARN);
                         return;
                     }
-                    SDL_Texture* tex=SDL_CreateTextureFromSurface(getRenderer(), surf);
                     SDL_FreeSurface(surf);
+
+                    SDL_Texture* tex=SDL_CreateTextureFromSurface(getRenderer(), surf);
                     if (!tex){
                         log(IMG_GetError(), LOG::WARN);
                         return;
                     }
                     img.setTex(tex);
+
                     st=txt;
                     empty=false;
                 }
@@ -86,10 +95,12 @@ namespace core::api {
            empty=true; 
         }
     }
+
     text::text(const char* txt, std::weak_ptr<TTF_Font> f) : img("",false,false){
         fo=f;
         init(txt);
     }
+
     void text::draw(){
         if (img.get()){
             if (!empty){
@@ -97,39 +108,46 @@ namespace core::api {
             }
         }
     }
+
     void text::setText(const char* txt){
         init(txt);
     }
+
     std::string text::getText(){
         return st;
     }
 
     sound::sound(const char* name){
-        auto p=Mix_LoadWAV(name);
+        Mix_Chunk* p=Mix_LoadWAV(name);
         if (!p){
             log(Mix_GetError(), LOG::WARN);            
             return;
         }
         ptr.reset(p, Mix_FreeChunk);
     }
+
     void sound::play(){
         if (ptr.get()){
             Mix_PlayChannel(-1, ptr.get(), false);
         }
     }
-    void sound::setVol(Uint8 vol){
+
+    void sound::setVol(int vol){
         if (ptr.get()){
-            vol = std::min(vol, (Uint8)100);
-            Mix_VolumeChunk(ptr.get(), vol);
+            if (vol > 0){
+                vol = std::min(vol, 100);
+                Mix_VolumeChunk(ptr.get(), vol);
+            }
         }
     }
+
     std::shared_ptr<Mix_Chunk> sound::get(){
         return ptr;
     }
 
     music::music(const char* name, bool load){
         if (load){
-            auto p = Mix_LoadMUS(name);
+            Mix_Music* p = Mix_LoadMUS(name);
             if (!p){
                 log(Mix_GetError(), LOG::WARN);
                 return;
@@ -137,22 +155,25 @@ namespace core::api {
             ptr.reset(p, Mix_FreeMusic);
         }
     }
+
     void music::setMusic(const char* name){
         if (ptr.get()){
             halt();
         }
-        auto p = Mix_LoadMUS(name);
+        Mix_Music* p = Mix_LoadMUS(name);
         if (!p){
             log(Mix_GetError(), LOG::WARN);
             return;
         }
         ptr.reset(p, Mix_FreeMusic);
     }
+
     void music::play(bool loops){
         if (ptr.get()){
             Mix_PlayMusic(ptr.get(), loops);
         }
     }
+
     void music::pause(){
         if (ptr.get()){
             if (!Mix_PausedMusic()){
@@ -160,6 +181,7 @@ namespace core::api {
             }
         }
     }
+
     void music::resume(){
         if (ptr.get()){
             if (Mix_PausedMusic()){
@@ -167,37 +189,59 @@ namespace core::api {
             }
         }
     }
+
     void music::halt(){
         if (ptr.get()){
             Mix_HaltMusic();
         }
     }
-    void music::skip(int time){
+
+    void music::skip(double time){
         if (ptr.get()){
-            double length=Mix_MusicDuration(ptr.get());
-            double start=Mix_GetMusicPosition(ptr.get());
-            if (time>0){
-                if ((length-start)>=time){
+            double length = getTotalDuration();
+            double start = getCurrentDuration();
+
+            if (time > 0){
+                if ((length-start) >= time){
                     Mix_SetMusicPosition(start+time);
                 }
             }
-            else if(time<0){
-                if (start+time>=0){
+            else if (time < 0){
+                if ((start+time) >= 0){
                     Mix_SetMusicPosition(start+time);
                 }
             }
         }
     }
-    void music::setVol(Uint8 vol){
+
+    void music::setVol(int vol){
         if (ptr.get()){
-            vol = std::min(vol, (Uint8)100);
-            Mix_VolumeMusic(vol);
+            if (vol > 0){
+                vol = std::min(vol, 100);
+                Mix_VolumeMusic(vol);
+            }
         }
     }
-    std::shared_ptr<Mix_Music> music::get(){
-        return ptr;
-    }
+
     void music::destroy(){
         ptr.reset();
+    }
+
+    double music::getTotalDuration(){
+        if (ptr.get()){
+            return Mix_MusicDuration(ptr.get());
+        }
+        return -1;
+    }
+
+    double music::getCurrentDuration(){
+        if (ptr.get()){
+            return Mix_GetMusicPosition(ptr.get());
+        }
+        return -1;
+    }
+    
+    std::shared_ptr<Mix_Music> music::get(){
+        return ptr;
     }
 }

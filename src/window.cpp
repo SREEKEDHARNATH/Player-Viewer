@@ -1,17 +1,22 @@
 #include <SDL.h>
 #include <SDL_clipboard.h>
+#include <SDL_error.h>
 #include <SDL_events.h>
 #include <SDL_image.h>
 #include <SDL_keyboard.h>
 #include <SDL_keycode.h>
 #include <SDL_mouse.h>
+#include <SDL_pixels.h>
+#include <SDL_rect.h>
 #include <SDL_render.h>
 #include <SDL_scancode.h>
 #include <SDL_stdinc.h>
+#include <SDL_surface.h>
 #include <SDL_timer.h>
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 #include <SDL_video.h>
+#include <string>
 #include <utility>
 #include "window.hpp"
 #include "Log.hpp"
@@ -25,7 +30,6 @@ namespace core {
         if (!i.first)    {
             log(i.second, LOG::ERROR);
         }
-
         bool running=true;
         SDL_Event e;
         api::font f("assets/fonts/Montserrat-BoldItalic.ttf", 32);
@@ -38,6 +42,50 @@ namespace core {
         Uint8 vol=100;
         bool muted=false;
         bool txtinput=true;
+
+        api::image back("assets/images/back-button.jpg");
+        SDL_Rect mouse={0,0,1,1};
+
+        api::image up("assets/images/volume-up.jpg");
+        api::image down("assets/images/volume-down.jpg");
+        
+        api::image play("assets/images/play.jpg");
+        api::image pause("assets/images/pause.jpg");
+        play.dstrect.x=(getW()/2)-32;
+        play.dstrect.y=(getH()/2)-32;
+        play.dstrect.w*=2;
+        play.dstrect.h*=2;
+        pause.dstrect.x=(getW()/2)-32;
+        pause.dstrect.y=(getH()/2)-32;
+        pause.dstrect.w*=2;
+        pause.dstrect.h*=2;
+
+        api::text volume(std::string(std::to_string(vol)+"%").c_str(),f.get());
+        volume.img.dstrect.x=getW()-200;
+        volume.img.dstrect.y=getH()-200;
+        
+        up.dstrect.x=getW()-210;
+        up.dstrect.y=getH()-250;
+        up.dstrect.w*=2;
+        up.dstrect.h*=2;
+        
+        down.dstrect.x=getW()-210;
+        down.dstrect.y=getH()-150;
+        down.dstrect.w*=2;
+        down.dstrect.h*=2;
+
+        api::image skipositive("assets/images/skip10s.jpg");
+        skipositive.dstrect.x=(getW()/2)+224;
+        skipositive.dstrect.y=(getH()/2)-32;
+        skipositive.dstrect.w*=2;
+        skipositive.dstrect.h*=2;
+
+        api::image skinegative("assets/images/skip-10s.jpg");
+        skinegative.dstrect.x=(getW()/2)-256;
+        skinegative.dstrect.y=(getH()/2)-32;
+        skinegative.dstrect.w*=2;
+        skinegative.dstrect.h*=2;
+
         while (running) {
             while (SDL_PollEvent(&e)){
                 switch (e.type) {
@@ -61,6 +109,8 @@ namespace core {
                     
                 }
             }
+            mouse.x=mouselistener::getX();
+            mouse.y=mouselistener::getY();
             running=!keylistener::isPressed(SDLK_ESCAPE);
             if (keylistener::isPressed(SDLK_CAPSLOCK)){
                 caps=!caps;
@@ -139,7 +189,6 @@ namespace core {
                         txt="Invalid!";
                     }
                     else {
-                        txt="";
                         m.play();
                         txtinput=false;
                     }
@@ -149,6 +198,40 @@ namespace core {
                 }
             }
             else {
+                if (mouselistener::isPressed(SDL_BUTTON_LEFT)){
+                    if (SDL_HasIntersection(&play.dstrect, &mouse)){
+                        paused=!paused;
+                        if (paused){
+                            m.pause();
+                        }
+                        else {
+                            m.resume();
+                        }
+                    }
+                    if (SDL_HasIntersection(&back.dstrect, &mouse)){
+                        txtinput=true;
+                        m.destroy();
+                    }
+                    if (SDL_HasIntersection(&up.dstrect, &mouse)){
+                        if (vol < 96){
+                            vol+=5;
+                            m.setVol(vol);
+                        }
+                    }
+                    if (SDL_HasIntersection(&down.dstrect, &mouse)){
+                        if (vol > 4){
+                            vol-=5;
+                            m.setVol(vol);
+                        }
+                    }
+                    if (SDL_HasIntersection(&skipositive.dstrect, &mouse)){
+                        m.skip(10);
+                    }
+                    if (SDL_HasIntersection(&skinegative.dstrect, &mouse)){
+                        m.skip(-10);
+                    }
+                    
+                }
                 if (keylistener::isPressed(SDLK_p)){
                     paused=!paused;
                     if (paused){
@@ -189,10 +272,32 @@ namespace core {
                     txtinput=true;
                     m.destroy();
                 }
+                if (muted){
+                    volume.setText("0%");
+                }
+                else if (std::to_string(vol) != volume.getText().substr(0,volume.getText().size()-1)){
+                    volume.setText(std::string(std::to_string(vol)+"%").c_str());
+                }
             }
             
             SDL_RenderClear(getRenderer());
-            t.draw();
+            if (txtinput){
+                t.draw();
+            }
+            else {
+                skipositive.draw();
+                skinegative.draw();
+                back.draw();
+                up.draw();
+                down.draw();
+                volume.draw();
+                if (paused){
+                    pause.draw();
+                }
+                else {
+                    play.draw();
+                }
+            }
             SDL_RenderPresent(getRenderer());
             
             keylistener::update();
@@ -227,6 +332,12 @@ namespace core {
         if (!getRenderer()){
             return {false, SDL_GetError()};
         }
+        SDL_Surface* logo = IMG_Load("assets/images/logo.jpg");
+        if (!logo){
+            return {false, SDL_GetError()};
+        }
+        SDL_SetWindowIcon(getWindow(), logo);
+        SDL_FreeSurface(logo);
         return {true, "All great"};
     }
     void quit(){

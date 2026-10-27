@@ -233,17 +233,16 @@ CMakeFiles/p.dir/src/window.cpp.o: \
  /usr/include/SDL2/SDL_system.h /usr/include/SDL2/SDL_timer.h \
  /usr/include/SDL2/SDL_version.h /usr/include/SDL2/SDL_locale.h \
  /usr/include/SDL2/SDL_misc.h /usr/include/SDL2/SDL_clipboard.h \
- /usr/include/SDL2/SDL_events.h /usr/include/SDL2/SDL_image.h \
- /usr/include/SDL2/SDL.h /usr/include/SDL2/SDL_keyboard.h \
- /usr/include/SDL2/SDL_keycode.h /usr/include/SDL2/SDL_mouse.h \
- /usr/include/SDL2/SDL_render.h /usr/include/SDL2/SDL_scancode.h \
- /usr/include/SDL2/SDL_stdinc.h /usr/include/SDL2/SDL_timer.h \
+ /usr/include/SDL2/SDL_error.h /usr/include/SDL2/SDL_events.h \
+ /usr/include/SDL2/SDL_image.h /usr/include/SDL2/SDL.h \
+ /usr/include/SDL2/SDL_keyboard.h /usr/include/SDL2/SDL_keycode.h \
+ /usr/include/SDL2/SDL_mouse.h /usr/include/SDL2/SDL_pixels.h \
+ /usr/include/SDL2/SDL_rect.h /usr/include/SDL2/SDL_render.h \
+ /usr/include/SDL2/SDL_scancode.h /usr/include/SDL2/SDL_stdinc.h \
+ /usr/include/SDL2/SDL_surface.h /usr/include/SDL2/SDL_timer.h \
  /usr/include/SDL2/SDL_ttf.h /usr/include/SDL2/SDL_mixer.h \
- /usr/include/SDL2/SDL_video.h /usr/include/c++/16/utility \
- /usr/include/c++/16/bits/stl_relops.h \
- /usr/include/c++/16/initializer_list /usr/include/c++/16/bits/intcmp.h \
- /home/sree/12-weeks-projects/Player-Viewer/include/window.hpp \
- /usr/include/c++/16/string /usr/include/c++/16/bits/stringfwd.h \
+ /usr/include/SDL2/SDL_video.h /usr/include/c++/16/string \
+ /usr/include/c++/16/bits/stringfwd.h \
  /usr/include/c++/16/bits/memoryfwd.h \
  /usr/include/c++/16/bits/char_traits.h \
  /usr/include/c++/16/bits/postypes.h /usr/include/c++/16/cwchar \
@@ -258,7 +257,7 @@ CMakeFiles/p.dir/src/window.cpp.o: \
  /usr/include/c++/16/cctype /usr/include/c++/16/bits/ostream_insert.h \
  /usr/include/c++/16/bits/cxxabi_forced.h \
  /usr/include/c++/16/bits/range_access.h \
- /usr/include/c++/16/bits/erase_if.h \
+ /usr/include/c++/16/initializer_list /usr/include/c++/16/bits/erase_if.h \
  /usr/include/c++/16/bits/basic_string.h \
  /usr/include/c++/16/ext/alloc_traits.h \
  /usr/include/c++/16/bits/alloc_traits.h /usr/include/c++/16/string_view \
@@ -278,11 +277,13 @@ CMakeFiles/p.dir/src/window.cpp.o: \
  /usr/include/c++/16/bits/uses_allocator.h \
  /usr/include/c++/16/bits/uses_allocator_args.h /usr/include/c++/16/tuple \
  /usr/include/c++/16/bits/invoke.h /usr/include/c++/16/bits/ranges_util.h \
+ /usr/include/c++/16/utility /usr/include/c++/16/bits/stl_relops.h \
+ /usr/include/c++/16/bits/intcmp.h \
+ /home/sree/12-weeks-projects/Player-Viewer/include/window.hpp \
  /home/sree/12-weeks-projects/Player-Viewer/include/Log.hpp \
  /usr/include/SDL2/SDL_log.h \
  /home/sree/12-weeks-projects/Player-Viewer/include/api.hpp \
- /usr/include/SDL2/SDL_rect.h /usr/include/c++/16/memory \
- /usr/include/c++/16/bits/stl_tempbuf.h \
+ /usr/include/c++/16/memory /usr/include/c++/16/bits/stl_tempbuf.h \
  /usr/include/c++/16/bits/stl_uninitialized.h \
  /usr/include/c++/16/bits/stl_raw_storage_iter.h \
  /usr/include/c++/16/bits/align.h /usr/include/c++/16/bits/unique_ptr.h \

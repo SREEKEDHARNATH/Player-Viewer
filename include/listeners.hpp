@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL_events.h>
+
 namespace core::keylistener {
     void reg(SDL_KeyboardEvent key);
 
