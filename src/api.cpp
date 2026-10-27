@@ -74,9 +74,9 @@ namespace core::api {
                         log(TTF_GetError(), LOG::WARN);
                         return;
                     }
+                    SDL_Texture* tex=SDL_CreateTextureFromSurface(getRenderer(), surf);
                     SDL_FreeSurface(surf);
 
-                    SDL_Texture* tex=SDL_CreateTextureFromSurface(getRenderer(), surf);
                     if (!tex){
                         log(IMG_GetError(), LOG::WARN);
                         return;

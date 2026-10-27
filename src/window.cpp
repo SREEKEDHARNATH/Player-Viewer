@@ -86,6 +86,8 @@ namespace core {
         skinegative.dstrect.w*=2;
         skinegative.dstrect.h*=2;
 
+        api::image sliderbutton("assets/images/slider-button.jpg");
+        sliderbutton.dstrect.y=(getH()/2)+200;
         while (running) {
             while (SDL_PollEvent(&e)){
                 switch (e.type) {
@@ -285,12 +287,16 @@ namespace core {
                 t.draw();
             }
             else {
+                if (m.get()){
+                   sliderbutton.dstrect.x=getW()*(m.getCurrentDuration()/m.getTotalDuration());
+                }
                 skipositive.draw();
                 skinegative.draw();
                 back.draw();
                 up.draw();
                 down.draw();
                 volume.draw();
+                sliderbutton.draw();
                 if (paused){
                     pause.draw();
                 }
