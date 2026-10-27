@@ -30,6 +30,24 @@ namespace core {
         if (!i.first)    {
             log(i.second, LOG::ERROR);
         }
+
+        SDL_Surface* surf=IMG_Load("assets/cursors/Cursor.png");
+        SDL_Cursor* cursor=nullptr;
+        if (surf){
+            cursor = SDL_CreateColorCursor(surf, 0, 0);
+            if (cursor){
+                SDL_ShowCursor(SDL_DISABLE);
+                SDL_SetCursor(cursor);
+                SDL_ShowCursor(SDL_ENABLE);
+            }
+            else {
+                log(SDL_GetError(), LOG::WARN);    
+            }
+            SDL_FreeSurface(surf);
+        }
+        else {
+            log(SDL_GetError(), LOG::WARN);
+        }
         bool running=true;
         SDL_Event e;
         api::font f("assets/fonts/Montserrat-BoldItalic.ttf", 32);
@@ -86,8 +104,24 @@ namespace core {
         skinegative.dstrect.w*=2;
         skinegative.dstrect.h*=2;
 
-        api::image sliderbutton("assets/images/slider-button.jpg");
-        sliderbutton.dstrect.y=(getH()/2)+200;
+        api::image sliderbutton("assets/images/slider-button.png");
+        sliderbutton.dstrect.y=(getH()/2)+300;
+
+        api::image sliderleft("assets/images/left-end-slider.jpg");
+        sliderleft.dstrect.y=(getH()/2)+307;
+        sliderleft.dstrect.h*=4;
+
+        api::image slideright("assets/images/right-end-slider.jpg");
+        slideright.dstrect.y=(getH()/2)+307;
+        slideright.dstrect.h*=4;
+        slideright.dstrect.x=getW()-slideright.dstrect.w;
+
+        api::image slidermiddle("assets/images/middle-slider.jpg");
+        slidermiddle.dstrect.y=(getH()/2)+307;
+        slidermiddle.dstrect.h*=4;
+        slidermiddle.dstrect.x=sliderleft.dstrect.w;
+        slidermiddle.dstrect.w=getW()-(sliderleft.dstrect.w+slideright.dstrect.w);
+
         while (running) {
             while (SDL_PollEvent(&e)){
                 switch (e.type) {
@@ -113,7 +147,9 @@ namespace core {
             }
             mouse.x=mouselistener::getX();
             mouse.y=mouselistener::getY();
-            running=!keylistener::isPressed(SDLK_ESCAPE);
+            if (keylistener::isPressed(SDLK_ESCAPE)){
+                running=false;
+            }
             if (keylistener::isPressed(SDLK_CAPSLOCK)){
                 caps=!caps;
             }
@@ -232,9 +268,14 @@ namespace core {
                     if (SDL_HasIntersection(&skinegative.dstrect, &mouse)){
                         m.skip(-10);
                     }
-                    
                 }
-                if (keylistener::isPressed(SDLK_p)){
+                if ((SDL_HasIntersection(&mouse, &slidermiddle.dstrect) || SDL_HasIntersection(&mouse, &slideright.dstrect) || SDL_HasIntersection(&mouse, &sliderleft.dstrect)) && mouselistener::isDown(SDL_BUTTON_LEFT)){
+                    m.pause();
+                    paused=true;
+                    sliderbutton.dstrect.x=mouse.x;
+                    Mix_SetMusicPosition((mouse.x/(double)getW())*m.getTotalDuration());
+                }
+                if (keylistener::isPressed(SDLK_p) || keylistener::isPressed(SDLK_SPACE)){
                     paused=!paused;
                     if (paused){
                         m.pause();
@@ -289,6 +330,9 @@ namespace core {
             else {
                 if (m.get()){
                    sliderbutton.dstrect.x=getW()*(m.getCurrentDuration()/m.getTotalDuration());
+                   if (m.getCurrentDuration()>=m.getTotalDuration()){
+                        Mix_SetMusicPosition(0);
+                   }
                 }
                 skipositive.draw();
                 skinegative.draw();
@@ -296,6 +340,9 @@ namespace core {
                 up.draw();
                 down.draw();
                 volume.draw();
+                sliderleft.draw();
+                slideright.draw();
+                slidermiddle.draw();
                 sliderbutton.draw();
                 if (paused){
                     pause.draw();
@@ -310,6 +357,12 @@ namespace core {
             mouselistener::update();
             SDL_Delay(16);
         }
+        //auto curs=SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+        SDL_SetCursor(NULL);
+        if (cursor){
+            SDL_FreeCursor(cursor);
+        }
+        
     }
 
     std::pair<bool, const char*> init(){
