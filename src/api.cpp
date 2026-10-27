@@ -127,10 +127,23 @@ namespace core::api {
         return ptr;
     }
 
-    music::music(const char* name){
-        auto p=Mix_LoadMUS(name);
+    music::music(const char* name, bool load){
+        if (load){
+            auto p = Mix_LoadMUS(name);
+            if (!p){
+                log(Mix_GetError(), LOG::WARN);
+                return;
+            }
+            ptr.reset(p, Mix_FreeMusic);
+        }
+    }
+    void music::setMusic(const char* name){
+        if (ptr.get()){
+            halt();
+        }
+        auto p = Mix_LoadMUS(name);
         if (!p){
-            log(Mix_GetError(), LOG::WARN);            
+            log(Mix_GetError(), LOG::WARN);
             return;
         }
         ptr.reset(p, Mix_FreeMusic);
@@ -159,6 +172,22 @@ namespace core::api {
             Mix_HaltMusic();
         }
     }
+    void music::skip(int time){
+        if (ptr.get()){
+            double length=Mix_MusicDuration(ptr.get());
+            double start=Mix_GetMusicPosition(ptr.get());
+            if (time>0){
+                if ((length-start)>=time){
+                    Mix_SetMusicPosition(start+time);
+                }
+            }
+            else if(time<0){
+                if (start+time>=0){
+                    Mix_SetMusicPosition(start+time);
+                }
+            }
+        }
+    }
     void music::setVol(Uint8 vol){
         if (ptr.get()){
             vol = std::min(vol, (Uint8)100);
@@ -167,5 +196,8 @@ namespace core::api {
     }
     std::shared_ptr<Mix_Music> music::get(){
         return ptr;
+    }
+    void music::destroy(){
+        ptr.reset();
     }
 }

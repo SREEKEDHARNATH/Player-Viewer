@@ -45,12 +45,15 @@ namespace core::api {
     class music{
         std::shared_ptr<Mix_Music> ptr;
         public:
-            music(const char* name);
+            music(const char* name, bool load=true);
+            void setMusic(const char* name);
             void play(bool loops=true);
             void pause();
             void resume();
             void halt();
+            void skip(int time);
             void setVol(Uint8 vol);
+            void destroy();
             std::shared_ptr<Mix_Music> get();
     };
     

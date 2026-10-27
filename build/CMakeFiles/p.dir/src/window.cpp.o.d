@@ -232,13 +232,15 @@ CMakeFiles/p.dir/src/window.cpp.o: \
  /usr/include/SDL2/SDL_render.h /usr/include/SDL2/SDL_shape.h \
  /usr/include/SDL2/SDL_system.h /usr/include/SDL2/SDL_timer.h \
  /usr/include/SDL2/SDL_version.h /usr/include/SDL2/SDL_locale.h \
- /usr/include/SDL2/SDL_misc.h /usr/include/SDL2/SDL_events.h \
- /usr/include/SDL2/SDL_image.h /usr/include/SDL2/SDL.h \
- /usr/include/SDL2/SDL_keyboard.h /usr/include/SDL2/SDL_keycode.h \
- /usr/include/SDL2/SDL_mouse.h /usr/include/SDL2/SDL_render.h \
- /usr/include/SDL2/SDL_timer.h /usr/include/SDL2/SDL_ttf.h \
- /usr/include/SDL2/SDL_mixer.h /usr/include/SDL2/SDL_video.h \
- /usr/include/c++/16/utility /usr/include/c++/16/bits/stl_relops.h \
+ /usr/include/SDL2/SDL_misc.h /usr/include/SDL2/SDL_clipboard.h \
+ /usr/include/SDL2/SDL_events.h /usr/include/SDL2/SDL_image.h \
+ /usr/include/SDL2/SDL.h /usr/include/SDL2/SDL_keyboard.h \
+ /usr/include/SDL2/SDL_keycode.h /usr/include/SDL2/SDL_mouse.h \
+ /usr/include/SDL2/SDL_render.h /usr/include/SDL2/SDL_scancode.h \
+ /usr/include/SDL2/SDL_stdinc.h /usr/include/SDL2/SDL_timer.h \
+ /usr/include/SDL2/SDL_ttf.h /usr/include/SDL2/SDL_mixer.h \
+ /usr/include/SDL2/SDL_video.h /usr/include/c++/16/utility \
+ /usr/include/c++/16/bits/stl_relops.h \
  /usr/include/c++/16/initializer_list /usr/include/c++/16/bits/intcmp.h \
  /home/sree/12-weeks-projects/Player-Viewer/include/window.hpp \
  /usr/include/c++/16/string /usr/include/c++/16/bits/stringfwd.h \

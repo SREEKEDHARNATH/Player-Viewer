@@ -1,10 +1,13 @@
 #include <SDL.h>
+#include <SDL_clipboard.h>
 #include <SDL_events.h>
 #include <SDL_image.h>
 #include <SDL_keyboard.h>
 #include <SDL_keycode.h>
 #include <SDL_mouse.h>
 #include <SDL_render.h>
+#include <SDL_scancode.h>
+#include <SDL_stdinc.h>
 #include <SDL_timer.h>
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
@@ -27,8 +30,14 @@ namespace core {
         SDL_Event e;
         api::font f("assets/fonts/Montserrat-BoldItalic.ttf", 32);
         api::text t("", f.get());
+        t.img.dstrect.y=300;
+        api::music m("", false);
         std::string txt="";
-        bool caps=false;
+        bool caps=false,shift=false,ctrl=false;
+        bool paused=false;
+        Uint8 vol=100;
+        bool muted=false;
+        bool txtinput=true;
         while (running) {
             while (SDL_PollEvent(&e)){
                 switch (e.type) {
@@ -56,39 +65,132 @@ namespace core {
             if (keylistener::isPressed(SDLK_CAPSLOCK)){
                 caps=!caps;
             }
-            for (int i=32;i<=122;i++){
-                if (i==33){
-                    i=44;
-                }
-                if (i == 58 || i == 60 || i == 62 || i == 63 || i == 64 || i == 94 || i == 95){
-                    continue;
-                }
-                if (i>64 && i<91){
-                    if (keylistener::isPressed((SDL_KeyCode)(i+32))){
-                        SDL_KeyboardEvent key;
-                        key.state=SDL_RELEASED;
-                        key.keysym.scancode=SDL_GetScancodeFromKey((SDL_KeyCode)(i+32));
-                        keylistener::reg(key);
-                        txt+=(char)(caps ? i : i+32);
+            if (keylistener::isDown(SDLK_LSHIFT)){
+                shift=true;
+            }
+            else if (keylistener::isDown(SDLK_RSHIFT)){
+                shift=true;
+            }
+            else {
+                shift=false;
+            }
+            if (keylistener::isDown(SDLK_LCTRL)){
+                ctrl=true;
+            }
+            else if (keylistener::isDown(SDLK_RCTRL)){
+                ctrl=true;
+            }
+            else {
+                ctrl=false;
+            }
+            
+            if (txtinput){
+                if (!ctrl){
+                    for (int i=32;i<=122;i++){
+                        if (i==33){
+                            i=44;
+                        }
+                        if (i == 58 || i == 60 || i == 62 || i == 63 || i == 64 || i == 94 || i == 95){
+                            continue;
+                        }
+                        if (i>64 && i<91){
+                            if (keylistener::isPressed((SDL_KeyCode)(i+32))){
+                                if (caps || shift){
+                                    SDL_KeyboardEvent key;
+                                    key.state=SDL_RELEASED;
+                                    key.keysym.scancode=SDL_GetScancodeFromKey((SDL_KeyCode)(i+32));
+                                    keylistener::reg(key);
+                                    txt+=(char)(i);
+                                }
+                            }
+                        }
+                        else {
+                            if (keylistener::isPressed((SDL_KeyCode)i)){
+                                txt+=(char)i;
+                            }
+                        }
                     }
                 }
-                else {
-                    if (keylistener::isPressed((SDL_KeyCode)i)){
-                        txt+=(char)i;
+                if (ctrl && keylistener::isPressed(SDLK_c)){
+                    SDL_SetClipboardText(txt.c_str());
+                }
+                if (ctrl && keylistener::isPressed(SDLK_v)){
+                    auto c=SDL_GetClipboardText();
+                    txt+=c;
+                    SDL_free(c);
+                }
+                if (keylistener::isPressed(SDLK_BACKSPACE)){
+                    if (txt=="Invalid!"){
+                        txt="";
+                    }
+                    else if(shift || ctrl){
+                        txt="";
+                    }
+                    else if (txt.size()>1){
+                        txt=txt.substr(0,txt.size()-1);
+                    }
+                    else if(txt.size()==1){
+                        txt="";
                     }
                 }
-            }
-            if (keylistener::isPressed(SDLK_BACKSPACE)){
-                if (txt.size()>1){
-                    txt=txt.substr(0,txt.size()-1);
+                if (keylistener::isPressed(SDL_SCANCODE_RETURN)){
+                    m.setMusic(txt.c_str());
+                    if (!m.get()){
+                        txt="Invalid!";
+                    }
+                    else {
+                        txt="";
+                        m.play();
+                        txtinput=false;
+                    }
                 }
-                else if(txt.size()==1){
-                    txt="";
+                if (txt!=t.getText()){
+                    t.setText(txt.c_str());
                 }
             }
-            if (txt!=t.getText()){
-                t.setText(txt.c_str());
+            else {
+                if (keylistener::isPressed(SDLK_p)){
+                    paused=!paused;
+                    if (paused){
+                        m.pause();
+                    }
+                    else {
+                        m.resume();
+                    }
+                }
+                if (keylistener::isPressed(SDLK_m)){
+                    muted=!muted;
+                    if (muted){
+                        m.setVol(0);
+                    }
+                    else {
+                        m.setVol(vol);
+                    }
+                }
+                if (keylistener::isPressed(SDLK_RIGHT)){
+                    m.skip(10);
+                }   
+                if (keylistener::isPressed(SDLK_LEFT)){
+                    m.skip(-10);
+                }
+                if (keylistener::isPressed(SDLK_UP)){
+                    if (vol < 96){
+                        vol+=5;
+                        m.setVol(vol);
+                    }
+                }
+                if (keylistener::isPressed(SDLK_DOWN)){
+                    if (vol > 4){
+                        vol-=5;
+                        m.setVol(vol);
+                    }
+                }
+                if (keylistener::isPressed(SDLK_b)){
+                    txtinput=true;
+                    m.destroy();
+                }
             }
+            
             SDL_RenderClear(getRenderer());
             t.draw();
             SDL_RenderPresent(getRenderer());
@@ -101,7 +203,7 @@ namespace core {
 
     std::pair<bool, const char*> init(){
         int img_flags=IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_WEBP;
-        int sound_flags=MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_OPUS;
+        int sound_flags=MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_OPUS | MIX_INIT_FLAC;
         if (SDL_Init(SDL_INIT_EVERYTHING)){
             return {false, SDL_GetError()};
         }
