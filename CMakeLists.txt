@@ -15,6 +15,11 @@ pkg_check_modules(SDL2_MIXER REQUIRED IMPORTED_TARGET SDL2_mixer)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 file(CREATE_LINK ${CMAKE_CURRENT_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets SYMBOLIC)
 
+add_library(soloud STATIC IMPORTED)
+set_target_properties(soloud PROPERTIES
+    IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/libsoloud.a"
+)
+
 add_executable(p ${SOURCES})
 
 target_include_directories(p PRIVATE
@@ -23,6 +28,7 @@ target_include_directories(p PRIVATE
 
 target_link_libraries(p PRIVATE
     m
+    soloud
     PkgConfig::SDL2
     PkgConfig::SDL2_IMAGE
     PkgConfig::SDL2_TTF

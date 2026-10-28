@@ -240,9 +240,8 @@ CMakeFiles/p.dir/src/window.cpp.o: \
  /usr/include/SDL2/SDL_rect.h /usr/include/SDL2/SDL_render.h \
  /usr/include/SDL2/SDL_scancode.h /usr/include/SDL2/SDL_stdinc.h \
  /usr/include/SDL2/SDL_surface.h /usr/include/SDL2/SDL_timer.h \
- /usr/include/SDL2/SDL_ttf.h /usr/include/SDL2/SDL_mixer.h \
- /usr/include/SDL2/SDL_video.h /usr/include/c++/16/string \
- /usr/include/c++/16/bits/stringfwd.h \
+ /usr/include/SDL2/SDL_ttf.h /usr/include/SDL2/SDL_video.h \
+ /usr/include/c++/16/string /usr/include/c++/16/bits/stringfwd.h \
  /usr/include/c++/16/bits/memoryfwd.h \
  /usr/include/c++/16/bits/char_traits.h \
  /usr/include/c++/16/bits/postypes.h /usr/include/c++/16/cwchar \
@@ -283,6 +282,16 @@ CMakeFiles/p.dir/src/window.cpp.o: \
  /home/sree/12-weeks-projects/Player-Viewer/include/Log.hpp \
  /usr/include/SDL2/SDL_log.h \
  /home/sree/12-weeks-projects/Player-Viewer/include/api.hpp \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud.h \
+ /usr/include/assert.h \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_filter.h \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud.h \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_fader.h \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_audiosource.h \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_bus.h \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_queue.h \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_error.h \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_wavstream.h \
  /usr/include/c++/16/memory /usr/include/c++/16/bits/stl_tempbuf.h \
  /usr/include/c++/16/bits/stl_uninitialized.h \
  /usr/include/c++/16/bits/stl_raw_storage_iter.h \
@@ -339,4 +348,6 @@ CMakeFiles/p.dir/src/window.cpp.o: \
  /usr/include/c++/16/bits/ranges_algobase.h \
  /usr/include/c++/16/pstl/glue_memory_defs.h \
  /usr/include/c++/16/pstl/execution_defs.h \
- /home/sree/12-weeks-projects/Player-Viewer/include/listeners.hpp
+ /home/sree/12-weeks-projects/Player-Viewer/include/listeners.hpp \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud.h \
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_wav.h

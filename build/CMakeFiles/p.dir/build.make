@@ -160,6 +160,7 @@ p : CMakeFiles/p.dir/src/main.cpp.o
 p : CMakeFiles/p.dir/src/window.cpp.o
 p : CMakeFiles/p.dir/build.make
 p : CMakeFiles/p.dir/compiler_depend.ts
+p : /home/sree/12-weeks-projects/Player-Viewer/libs/libsoloud.a
 p : /usr/lib/libSDL2_image.so
 p : /usr/lib/libSDL2_ttf.so
 p : /usr/lib/libSDL2_mixer.so

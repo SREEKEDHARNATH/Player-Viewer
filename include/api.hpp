@@ -1,6 +1,7 @@
 #pragma once
 
-#include <SDL_mixer.h>
+#include "soloud/soloud.h"
+#include "soloud/soloud_wavstream.h"
 #include <SDL_rect.h>
 #include <SDL_render.h>
 #include <SDL_ttf.h>
@@ -43,36 +44,25 @@ namespace core::api {
             std::string getText();
     };
 
-    class sound{
-        std::shared_ptr<Mix_Chunk> ptr;
-        public:
-            sound(const char* name);
-            void play();
-            void setVol(int vol);
-
-            std::shared_ptr<Mix_Chunk> get();
-    };
-
     class music{
-        std::shared_ptr<Mix_Music> ptr;
+        std::shared_ptr<SoLoud::WavStream> ptr;
+        int handle=-1;
         public:
             music(const char* name, bool load=true);
-            void setMusic(const char* name);
-
-            void play(bool loops=true);
-            void pause();
-            void resume();
-            void halt();
-
-            void skip(double time);
-            void setVol(int vol);
-
             void destroy();
-
+            void set(const char* name);
+            void play(SoLoud::Soloud* soloud);
+            void pause(SoLoud::Soloud* soloud);
+            void resume(SoLoud::Soloud* soloud);
+            void halt(SoLoud::Soloud* soloud);
+            void setVol(SoLoud::Soloud* soloud, int vol);
+            void setSpeed(SoLoud::Soloud* soloud, double speed);
+            void skip(SoLoud::Soloud* soloud, double sk);
+            double getCurrentDuration(SoLoud::Soloud* soloud);
             double getTotalDuration();
-            double getCurrentDuration();
-
-            std::shared_ptr<Mix_Music> get();
+            void setDuration(SoLoud::Soloud* soloud, float time);
+            int getVol();
+            std::shared_ptr<SoLoud::WavStream> get();
     };
     
 }

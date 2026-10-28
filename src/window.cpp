@@ -14,7 +14,6 @@
 #include <SDL_surface.h>
 #include <SDL_timer.h>
 #include <SDL_ttf.h>
-#include <SDL_mixer.h>
 #include <SDL_video.h>
 #include <string>
 #include <utility>
@@ -22,6 +21,8 @@
 #include "Log.hpp"
 #include "api.hpp"
 #include "listeners.hpp"
+#include <soloud/soloud.h>
+#include <soloud/soloud_wav.h>
 
 namespace core {
     std::pair<bool, const char*> init();
@@ -30,7 +31,9 @@ namespace core {
         if (!i.first)    {
             log(i.second, LOG::ERROR);
         }
-
+        SoLoud::Soloud soloud;
+        soloud.init();
+        
         SDL_Surface* surf=IMG_Load("assets/cursors/Cursor.png");
         SDL_Cursor* cursor=nullptr;
         if (surf){
@@ -57,9 +60,70 @@ namespace core {
         std::string txt="";
         bool caps=false,shift=false,ctrl=false;
         bool paused=false;
-        Uint8 vol=100;
+        Uint8 vol=30;
         bool muted=false;
         bool txtinput=true;
+
+        api::image close("assets/images/close.png");
+        close.dstrect.x=getW()-close.dstrect.w;
+
+        api::image noforward("assets/images/forward-skip.png");
+        noforward.dstrect.y=getH()-200;
+        noforward.dstrect.x=getW()-300;
+        noforward.dstrect.w*=2;
+        noforward.dstrect.h*=2;
+
+        api::image forward25("assets/images/forward-skip25.png");
+        forward25.dstrect.w*=2;
+        forward25.dstrect.h*=2;
+        forward25.dstrect.y=getH()-250;
+        forward25.dstrect.x=getW()-300;
+
+        api::image forward50("assets/images/forward-skip50.png");
+        forward50.dstrect.w*=2;
+        forward50.dstrect.h*=2;
+        forward50.dstrect.y=getH()-300;
+        forward50.dstrect.x=getW()-300;
+
+        api::image forward75("assets/images/forward-skip75.png");
+        forward75.dstrect.w*=2;
+        forward75.dstrect.h*=2;
+        forward75.dstrect.y=getH()-350;
+        forward75.dstrect.x=getW()-300;
+
+        api::image forward1("assets/images/forward-skip1.png");
+        forward1.dstrect.w*=2;
+        forward1.dstrect.h*=2;
+        forward1.dstrect.y=getH()-400;
+        forward1.dstrect.x=getW()-300;
+
+        api::image forward125("assets/images/forward-skip125.png");
+        forward125.dstrect.w*=2;
+        forward125.dstrect.h*=2;
+        forward125.dstrect.y=getH()-450;
+        forward125.dstrect.x=getW()-300;
+
+        api::image forward150("assets/images/forward-skip150.png");
+        forward150.dstrect.w*=2;
+        forward150.dstrect.h*=2;
+        forward150.dstrect.y=getH()-500;
+        forward150.dstrect.x=getW()-300;
+
+        api::image forward175("assets/images/forward-skip175.png");
+        forward175.dstrect.w*=2;
+        forward175.dstrect.h*=2;
+        forward175.dstrect.y=getH()-550;
+        forward175.dstrect.x=getW()-300;
+
+        api::image forward2("assets/images/forward-skip2.png");
+        forward2.dstrect.w*=2;
+        forward2.dstrect.h*=2;
+        forward2.dstrect.y=getH()-600;
+        forward2.dstrect.x=getW()-300;
+
+        SDL_Rect combinedrect = forward2.dstrect;
+        combinedrect.h*=8;
+        bool showmenu=false;
 
         api::image back("assets/images/back-button.jpg");
         SDL_Rect mouse={0,0,1,1};
@@ -222,12 +286,12 @@ namespace core {
                     }
                 }
                 if (keylistener::isPressed(SDL_SCANCODE_RETURN)){
-                    m.setMusic(txt.c_str());
+                    m.set(txt.c_str());
                     if (!m.get()){
                         txt="Invalid!";
                     }
                     else {
-                        m.play();
+                        m.play(&soloud);
                         txtinput=false;
                     }
                 }
@@ -237,13 +301,37 @@ namespace core {
             }
             else {
                 if (mouselistener::isPressed(SDL_BUTTON_LEFT)){
+                    if (SDL_HasIntersection(&forward25.dstrect, &mouse)){
+                        m.setSpeed(&soloud, 0.25);
+                    }
+                    if (SDL_HasIntersection(&forward50.dstrect, &mouse)){
+                        m.setSpeed(&soloud, 0.50);
+                    }
+                    if (SDL_HasIntersection(&forward75.dstrect, &mouse)){
+                        m.setSpeed(&soloud, 0.75);
+                    }
+                    if (SDL_HasIntersection(&forward1.dstrect, &mouse)){
+                        m.setSpeed(&soloud, 1);
+                    }
+                    if (SDL_HasIntersection(&forward125.dstrect, &mouse)){
+                        m.setSpeed(&soloud, 1.25);
+                    }
+                    if (SDL_HasIntersection(&forward150.dstrect, &mouse)){
+                        m.setSpeed(&soloud, 1.50);
+                    }
+                    if (SDL_HasIntersection(&forward175.dstrect, &mouse)){
+                        m.setSpeed(&soloud, 1.75);
+                    }
+                    if (SDL_HasIntersection(&forward2.dstrect, &mouse)){
+                        m.setSpeed(&soloud, 2.0);
+                    }
                     if (SDL_HasIntersection(&play.dstrect, &mouse)){
                         paused=!paused;
                         if (paused){
-                            m.pause();
+                            m.pause(&soloud);
                         }
                         else {
-                            m.resume();
+                            m.resume(&soloud);
                         }
                     }
                     if (SDL_HasIntersection(&back.dstrect, &mouse)){
@@ -253,62 +341,71 @@ namespace core {
                     if (SDL_HasIntersection(&up.dstrect, &mouse)){
                         if (vol < 96){
                             vol+=5;
-                            m.setVol(vol);
                         }
+                        muted=false;
                     }
                     if (SDL_HasIntersection(&down.dstrect, &mouse)){
                         if (vol > 4){
                             vol-=5;
-                            m.setVol(vol);
+                            muted=false;
+                        }
+                        else {
+                            muted=true;
                         }
                     }
                     if (SDL_HasIntersection(&skipositive.dstrect, &mouse)){
-                        m.skip(10);
+                        m.skip(&soloud,10);
                     }
                     if (SDL_HasIntersection(&skinegative.dstrect, &mouse)){
-                        m.skip(-10);
+                        m.skip(&soloud,-10);
                     }
                 }
-                if ((SDL_HasIntersection(&mouse, &slidermiddle.dstrect) || SDL_HasIntersection(&mouse, &slideright.dstrect) || SDL_HasIntersection(&mouse, &sliderleft.dstrect)) && mouselistener::isDown(SDL_BUTTON_LEFT)){
-                    m.pause();
-                    paused=true;
-                    sliderbutton.dstrect.x=mouse.x;
-                    Mix_SetMusicPosition((mouse.x/(double)getW())*m.getTotalDuration());
+                if (SDL_HasIntersection(&mouse, &noforward.dstrect)){
+                    showmenu=true;
+                }
+                else if (SDL_HasIntersection(&mouse, &combinedrect));
+                else {
+                    showmenu=false;
+                }
+                if (SDL_HasIntersection(&mouse, &slidermiddle.dstrect) || SDL_HasIntersection(&mouse, &slideright.dstrect) || SDL_HasIntersection(&mouse, &sliderleft.dstrect)){
+                    if (mouselistener::isPressed(SDL_BUTTON_LEFT)){
+                        //m.pause(&soloud);
+                        //paused=true;
+                        sliderbutton.dstrect.x=mouse.x;
+                        m.setDuration(&soloud, (mouse.x/(float)getW())*m.getTotalDuration());
+                    }
                 }
                 if (keylistener::isPressed(SDLK_p) || keylistener::isPressed(SDLK_SPACE)){
                     paused=!paused;
                     if (paused){
-                        m.pause();
+                        m.pause(&soloud);
                     }
                     else {
-                        m.resume();
+                        m.resume(&soloud);
                     }
                 }
                 if (keylistener::isPressed(SDLK_m)){
-                    muted=!muted;
-                    if (muted){
-                        m.setVol(0);
-                    }
-                    else {
-                        m.setVol(vol);
-                    }
+                    muted=true;
                 }
                 if (keylistener::isPressed(SDLK_RIGHT)){
-                    m.skip(10);
+                    m.skip(&soloud,10);
                 }   
                 if (keylistener::isPressed(SDLK_LEFT)){
-                    m.skip(-10);
+                    m.skip(&soloud,-10);
                 }
                 if (keylistener::isPressed(SDLK_UP)){
                     if (vol < 96){
                         vol+=5;
-                        m.setVol(vol);
                     }
+                    muted=false;
                 }
                 if (keylistener::isPressed(SDLK_DOWN)){
                     if (vol > 4){
                         vol-=5;
-                        m.setVol(vol);
+                        muted=false;
+                    }
+                    else {
+                        muted=true;
                     }
                 }
                 if (keylistener::isPressed(SDLK_b)){
@@ -324,15 +421,37 @@ namespace core {
             }
             
             SDL_RenderClear(getRenderer());
+            if (mouselistener::isPressed(SDL_BUTTON_LEFT) && SDL_HasIntersection(&mouse, &close.dstrect)){
+                running=false;
+            }
+            close.draw();
             if (txtinput){
                 t.draw();
             }
             else {
+                if (muted){
+                    if (m.getVol()){
+                        m.setVol(&soloud, 0);
+                    }
+                }
+                else {
+                    if (m.getVol() != vol){
+                        m.setVol(&soloud, vol);
+                    }
+                }
+                noforward.draw();
+                if (showmenu){
+                    forward25.draw();
+                    forward50.draw();
+                    forward75.draw();
+                    forward1.draw();
+                    forward125.draw();
+                    forward150.draw();
+                    forward175.draw();
+                    forward2.draw();
+                }
                 if (m.get()){
-                   sliderbutton.dstrect.x=getW()*(m.getCurrentDuration()/m.getTotalDuration());
-                   if (m.getCurrentDuration()>=m.getTotalDuration()){
-                        Mix_SetMusicPosition(0);
-                   }
+                    sliderbutton.dstrect.x=getW()*(m.getCurrentDuration(&soloud)/m.getTotalDuration());
                 }
                 skipositive.draw();
                 skinegative.draw();
@@ -357,17 +476,15 @@ namespace core {
             mouselistener::update();
             SDL_Delay(16);
         }
-        //auto curs=SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
         SDL_SetCursor(NULL);
         if (cursor){
             SDL_FreeCursor(cursor);
         }
-        
+        soloud.deinit();
     }
 
     std::pair<bool, const char*> init(){
         int img_flags=IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_WEBP;
-        int sound_flags=MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_OPUS | MIX_INIT_FLAC;
         if (SDL_Init(SDL_INIT_EVERYTHING)){
             return {false, SDL_GetError()};
         }
@@ -376,12 +493,6 @@ namespace core {
         }
         if (TTF_Init()){
             return {false, TTF_GetError()};
-        }
-        if ((Mix_Init(sound_flags) & sound_flags) != sound_flags){
-            return {false, Mix_GetError()};
-        }
-        if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)){
-            return {false, Mix_GetError()};
         }
         getWindow()=SDL_CreateWindow(getTitle().c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, getW(), getH(), 0);
         if (!getWindow()){
@@ -406,8 +517,6 @@ namespace core {
         if (getRenderer()){
             SDL_DestroyRenderer(getRenderer());
         }
-        Mix_CloseAudio();
-        Mix_Quit();
         TTF_Quit();
         IMG_Quit();
         SDL_Quit();

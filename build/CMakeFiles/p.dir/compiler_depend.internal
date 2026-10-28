@@ -274,6 +274,14 @@ CMakeFiles/p.dir/src/api.cpp.o
  /home/sree/12-weeks-projects/Player-Viewer/src/api.cpp
  /home/sree/12-weeks-projects/Player-Viewer/include/Log.hpp
  /home/sree/12-weeks-projects/Player-Viewer/include/api.hpp
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_audiosource.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_bus.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_error.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_fader.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_filter.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_queue.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_wavstream.h
  /home/sree/12-weeks-projects/Player-Viewer/include/window.hpp
  /usr/include/SDL2/SDL.h
  /usr/include/SDL2/SDL_assert.h
@@ -341,6 +349,7 @@ CMakeFiles/p.dir/src/api.cpp.o
  /usr/include/asm/posix_types.h
  /usr/include/asm/posix_types_64.h
  /usr/include/asm/types.h
+ /usr/include/assert.h
  /usr/include/bits/atomic_wide_counter.h
  /usr/include/bits/byteswap.h
  /usr/include/bits/cpu-set.h
@@ -417,9 +426,11 @@ CMakeFiles/p.dir/src/api.cpp.o
  /usr/include/bits/wctype-wchar.h
  /usr/include/bits/wordsize.h
  /usr/include/bits/xopen_lim.h
+ /usr/include/c++/16/algorithm
  /usr/include/c++/16/backward/auto_ptr.h
  /usr/include/c++/16/backward/binders.h
  /usr/include/c++/16/bit
+ /usr/include/c++/16/bits/algorithmfwd.h
  /usr/include/c++/16/bits/align.h
  /usr/include/c++/16/bits/alloc_traits.h
  /usr/include/c++/16/bits/allocated_ptr.h
@@ -466,6 +477,7 @@ CMakeFiles/p.dir/src/api.cpp.o
  /usr/include/c++/16/bits/predefined_ops.h
  /usr/include/c++/16/bits/ptr_traits.h
  /usr/include/c++/16/bits/range_access.h
+ /usr/include/c++/16/bits/ranges_algo.h
  /usr/include/c++/16/bits/ranges_algobase.h
  /usr/include/c++/16/bits/ranges_base.h
  /usr/include/c++/16/bits/ranges_cmp.h
@@ -481,9 +493,11 @@ CMakeFiles/p.dir/src/api.cpp.o
  /usr/include/c++/16/bits/stdexcept_except.h
  /usr/include/c++/16/bits/stdexcept_throw.h
  /usr/include/c++/16/bits/stdexcept_throwfwd.h
+ /usr/include/c++/16/bits/stl_algo.h
  /usr/include/c++/16/bits/stl_algobase.h
  /usr/include/c++/16/bits/stl_construct.h
  /usr/include/c++/16/bits/stl_function.h
+ /usr/include/c++/16/bits/stl_heap.h
  /usr/include/c++/16/bits/stl_iterator.h
  /usr/include/c++/16/bits/stl_iterator_base_funcs.h
  /usr/include/c++/16/bits/stl_iterator_base_types.h
@@ -495,6 +509,7 @@ CMakeFiles/p.dir/src/api.cpp.o
  /usr/include/c++/16/bits/streambuf_iterator.h
  /usr/include/c++/16/bits/string_view.tcc
  /usr/include/c++/16/bits/stringfwd.h
+ /usr/include/c++/16/bits/uniform_int_dist.h
  /usr/include/c++/16/bits/unique_ptr.h
  /usr/include/c++/16/bits/uses_allocator.h
  /usr/include/c++/16/bits/uses_allocator_args.h
@@ -530,6 +545,7 @@ CMakeFiles/p.dir/src/api.cpp.o
  /usr/include/c++/16/new
  /usr/include/c++/16/numbers
  /usr/include/c++/16/pstl/execution_defs.h
+ /usr/include/c++/16/pstl/glue_algorithm_defs.h
  /usr/include/c++/16/pstl/glue_memory_defs.h
  /usr/include/c++/16/pstl/pstl_config.h
  /usr/include/c++/16/stdexcept
@@ -1306,6 +1322,15 @@ CMakeFiles/p.dir/src/window.cpp.o
  /home/sree/12-weeks-projects/Player-Viewer/include/Log.hpp
  /home/sree/12-weeks-projects/Player-Viewer/include/api.hpp
  /home/sree/12-weeks-projects/Player-Viewer/include/listeners.hpp
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_audiosource.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_bus.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_error.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_fader.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_filter.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_queue.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_wav.h
+ /home/sree/12-weeks-projects/Player-Viewer/include/soloud/soloud_wavstream.h
  /home/sree/12-weeks-projects/Player-Viewer/include/window.hpp
  /usr/include/SDL2/SDL.h
  /usr/include/SDL2/SDL_assert.h
@@ -1337,7 +1362,6 @@ CMakeFiles/p.dir/src/window.cpp.o
  /usr/include/SDL2/SDL_messagebox.h
  /usr/include/SDL2/SDL_metal.h
  /usr/include/SDL2/SDL_misc.h
- /usr/include/SDL2/SDL_mixer.h
  /usr/include/SDL2/SDL_mouse.h
  /usr/include/SDL2/SDL_mutex.h
  /usr/include/SDL2/SDL_pixels.h
@@ -1373,6 +1397,7 @@ CMakeFiles/p.dir/src/window.cpp.o
  /usr/include/asm/posix_types.h
  /usr/include/asm/posix_types_64.h
  /usr/include/asm/types.h
+ /usr/include/assert.h
  /usr/include/bits/atomic_wide_counter.h
  /usr/include/bits/byteswap.h
  /usr/include/bits/cpu-set.h
@@ -1748,6 +1773,7 @@ CMakeFiles/p.dir/src/window.cpp.o
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/xtestintrin.h
 
 p
+ /home/sree/12-weeks-projects/Player-Viewer/libs/libsoloud.a
  /usr/lib/Scrt1.o
  /usr/lib/crti.o
  /usr/lib/crtn.o

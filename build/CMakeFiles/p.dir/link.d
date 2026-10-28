@@ -7,6 +7,7 @@ p: \
   CMakeFiles/p.dir/src/listeners.cpp.o \
   CMakeFiles/p.dir/src/main.cpp.o \
   CMakeFiles/p.dir/src/window.cpp.o \
+  /home/sree/12-weeks-projects/Player-Viewer/libs/libsoloud.a \
   /usr/lib/libSDL2_image.so \
   /usr/lib/libSDL2_ttf.so \
   /usr/lib/libSDL2_mixer.so \
@@ -87,6 +88,8 @@ CMakeFiles/p.dir/src/listeners.cpp.o:
 CMakeFiles/p.dir/src/main.cpp.o:
 
 CMakeFiles/p.dir/src/window.cpp.o:
+
+/home/sree/12-weeks-projects/Player-Viewer/libs/libsoloud.a:
 
 /usr/lib/libSDL2_image.so:
 

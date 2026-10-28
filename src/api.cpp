@@ -6,6 +6,7 @@
 #include <SDL_render.h>
 #include <SDL_surface.h>
 #include <SDL_ttf.h>
+#include <algorithm>
 #include <memory>
 #include <string>
 namespace core::api {
@@ -117,131 +118,142 @@ namespace core::api {
         return st;
     }
 
-    sound::sound(const char* name){
-        Mix_Chunk* p=Mix_LoadWAV(name);
-        if (!p){
-            log(Mix_GetError(), LOG::WARN);            
-            return;
-        }
-        ptr.reset(p, Mix_FreeChunk);
-    }
-
-    void sound::play(){
-        if (ptr.get()){
-            Mix_PlayChannel(-1, ptr.get(), false);
-        }
-    }
-
-    void sound::setVol(int vol){
-        if (ptr.get()){
-            if (vol > 0){
-                vol = std::min(vol, 100);
-                Mix_VolumeChunk(ptr.get(), vol);
-            }
-        }
-    }
-
-    std::shared_ptr<Mix_Chunk> sound::get(){
-        return ptr;
-    }
-
     music::music(const char* name, bool load){
         if (load){
-            Mix_Music* p = Mix_LoadMUS(name);
-            if (!p){
-                log(Mix_GetError(), LOG::WARN);
-                return;
+            ptr=std::make_shared<SoLoud::WavStream>();
+    
+            int error_code=ptr->load(name);
+            if (error_code){
+                if (error_code==1){
+                    log("Invalid Parameter", LOG::WARN);
+                }
+                else if(error_code==2){
+                    log("File Not Found", LOG::WARN);
+                }
+                else if(error_code==3){
+                    log("File load failed", LOG::WARN);
+                }
+                else {
+                    log("Unknown Error", LOG::WARN);
+                }
             }
-            ptr.reset(p, Mix_FreeMusic);
         }
     }
-
-    void music::setMusic(const char* name){
+    void music::destroy(){
+        ptr.get()->stop();
+        handle=0;
+    }
+    void music::set(const char* name){
         if (ptr.get()){
-            halt();
+            destroy();
         }
-        Mix_Music* p = Mix_LoadMUS(name);
-        if (!p){
-            log(Mix_GetError(), LOG::WARN);
+        ptr=std::make_shared<SoLoud::WavStream>();
+
+        int error_code=ptr->load(name);
+        if (error_code){
+            if (error_code==1){
+                log("Invalid Parameter", LOG::WARN);
+            }
+            else if(error_code==2){
+                log("File Not Found", LOG::WARN);
+            }
+            else if(error_code==3){
+                log("File load failed", LOG::WARN);
+            }
+            else {
+                log("Unknown Error", LOG::WARN);
+            }
             return;
         }
-        ptr.reset(p, Mix_FreeMusic);
     }
-
-    void music::play(bool loops){
+    void music::play(SoLoud::Soloud* soloud){
         if (ptr.get()){
-            Mix_PlayMusic(ptr.get(), loops);
+            auto* a=ptr.get();
+            a->setLooping(true);
+            handle = soloud->play(*a);
         }
     }
-
-    void music::pause(){
+    void music::pause(SoLoud::Soloud* soloud){
         if (ptr.get()){
-            if (!Mix_PausedMusic()){
-                Mix_PauseMusic();
+            if (handle){
+                soloud->setPause(handle, true);
             }
         }
     }
-
-    void music::resume(){
+    void music::resume(SoLoud::Soloud* soloud){
         if (ptr.get()){
-            if (Mix_PausedMusic()){
-                Mix_ResumeMusic();
+            auto* a=ptr.get();
+            a->setLooping(true);
+            if (handle){
+                soloud->setPause(handle, false);
             }
         }
     }
-
-    void music::halt(){
+    void music::halt(SoLoud::Soloud* soloud){
         if (ptr.get()){
-            Mix_HaltMusic();
+            auto* a=ptr.get();
+            a->setLooping(true);
+            soloud->stop(handle);
+            handle=0;
         }
     }
-
-    void music::skip(double time){
+    void music::setVol(SoLoud::Soloud* soloud, int vol){
         if (ptr.get()){
-            double length = getTotalDuration();
-            double start = getCurrentDuration();
-
-            if (time > 0){
-                if ((length-start) >= time){
-                    Mix_SetMusicPosition(start+time);
-                }
-            }
-            else if (time < 0){
-                if ((start+time) >= 0){
-                    Mix_SetMusicPosition(start+time);
+            if (vol >= 0){
+                if (handle){
+                    soloud->setVolume(handle, std::min((vol+15)/20, 50));
                 }
             }
         }
     }
-
-    void music::setVol(int vol){
+    void music::setSpeed(SoLoud::Soloud* soloud, double speed){
         if (ptr.get()){
-            if (vol > 0){
-                vol = std::min(vol, 100);
-                Mix_VolumeMusic(vol);
+            if (handle){
+                soloud->setRelativePlaySpeed(handle, speed);
             }
         }
     }
-
-    void music::destroy(){
-        ptr.reset();
+    void music::skip(SoLoud::Soloud* soloud, double sk){
+        if (ptr.get()){
+            if (handle){
+                auto a=getTotalDuration();
+                auto b=getCurrentDuration(soloud);
+                if (sk > 0){
+                    if ((a-b) >= sk){
+                        soloud->seek(handle, b+sk);
+                    }
+                }
+                if (sk < 0){
+                    if (b+sk >= 0){
+                        soloud->seek(handle, b+sk);
+                    }
+                }
+                
+            }
+        }
     }
-
+    double music::getCurrentDuration(SoLoud::Soloud* soloud){
+        if (ptr.get()){
+            if (handle){
+                return soloud->getStreamPosition(handle);
+            }
+        }
+        return -1;
+    }
     double music::getTotalDuration(){
-        if (ptr.get()){
-            return Mix_MusicDuration(ptr.get());
-        }
-        return -1;
+        return ptr.get()->getLength();
     }
-
-    double music::getCurrentDuration(){
+    void music::setDuration(SoLoud::Soloud* soloud, float time){
         if (ptr.get()){
-            return Mix_GetMusicPosition(ptr.get());
+            if (handle){
+                soloud->seek(handle, time);
+            }
         }
-        return -1;
     }
-    
-    std::shared_ptr<Mix_Music> music::get(){
+    int music::getVol(){
+        return ptr.get()->mVolume;
+    }
+    std::shared_ptr<SoLoud::WavStream> music::get(){
         return ptr;
     }
 }
